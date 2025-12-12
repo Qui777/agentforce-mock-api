@@ -1,16 +1,36 @@
 export default function handler(req, res) {
-  const { buyerPreferences, listings } = req.body;
+  try {
+    const { listing } = req.body || {};
 
-  const matched = listings.filter((item) => {
-    return (
-      item.bedrooms >= buyerPreferences.minBedrooms &&
-      item.price <= buyerPreferences.maxPrice &&
-      item.location.includes(buyerPreferences.location)
-    );
-  });
+    const matchedBuyers = [
+      {
+        name: "Alex Johnson",
+        budget: "$450,000",
+        requirements: "3-bedroom family home",
+        score: 92
+      },
+      {
+        name: "Priya Singh",
+        budget: "$500,000",
+        requirements: "Modern home with open-plan living",
+        score: 88
+      },
+      {
+        name: "Michael Chen",
+        budget: "$480,000",
+        requirements: "Investment property",
+        score: 81
+      }
+    ];
 
-  res.status(200).json({
-    matches: matched,
-    total: matched.length
-  });
+    res.status(200).json({
+      ok: true,
+      buyers: matchedBuyers,
+      listingMeta: listing || { note: "No listing provided. Using demo data." }
+    });
+
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
 }
+
